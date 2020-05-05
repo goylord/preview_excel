@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel在线预览</title>
+</head>
+<style>
+    table {
+        border: none;
+        border-top: 1px solid #ccc;
+        border-left: 1px solid #ccc;
+    }
+    tr {
+        display: flex;
+        flex-direction: row;
+    }
+    th, td {
+        border: none;
+        padding: 5px;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+    td {
+        overflow: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+
+    }
+    th {
+        background: #eee;
+    }
+    #sheetList {
+        display: flex;
+        flex-direction: row;
+        border: 1px solid #aaa;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+    }
+    #sheetList div {
+        background: #eee;
+        border-right: 1px solid #aaa;
+        padding: 2px 6px;
+    }
+    .active {
+        color: #1a6;
+        border-top: 1px solid #1a6;
+        background: white;
+    }
+    #tableContianer {
+        height: 99vh;
+        overflow: auto;
+        padding-bottom: 50px;
+    }
+</style>
+<body>
+    <div id="tableContianer">
+        {{.}}
+    </div>
+    <div id="sheetList" onclick="openSheet()">
+  </div>
+</body>
+<script>
+    let parsedTables = document.getElementsByClassName('parseTable')
+    let sheetList = {}
+    let activeSheetName = ''
+    Array.prototype.forEach.call(parsedTables, (table, index) => {
+        console.debug(table.dataset.sheet)
+        if (index > 0) {
+            table.style.display = 'none'
+        }
+        sheetList[table.dataset.sheet] = table
+    })
+    // 遍历所有工作表
+    let sheetBtnContainer = document.getElementById('sheetList')
+    Object.keys(sheetList).forEach((sheetName, index)=> {
+       let sheetBtn = document.createElement('div')
+       sheetBtn.setAttribute('data-sheet', sheetName)
+       if (index === 0) {
+           activeSheetName = sheetName
+           sheetBtn.setAttribute('class', 'active sheetBtn')
+       } else  {
+           sheetBtn.setAttribute('class', 'sheetBtn')
+       }
+       sheetBtn.innerHTML = sheetName
+       sheetBtnContainer.appendChild(sheetBtn)
+    })
+
+    function openSheet() {
+        // 如果点击切换
+        if (window.event.srcElement.className.indexOf('sheetBtn') > -1) {
+            let sheetName = window.event.srcElement.dataset.sheet
+            // document.getElementsByClassName('active')[0].style.display = 'none'
+            document.getElementsByClassName('active')[0].setAttribute('class', 'sheetBtn')
+            sheetList[activeSheetName].style.display = 'none'
+            sheetList[sheetName].style.display = 'block'
+            window.event.srcElement.setAttribute('class', 'active sheetBtn')
+            activeSheetName = sheetName
+        }
+    }
+</script>
+</html>
